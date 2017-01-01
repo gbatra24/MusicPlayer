@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#fff">
+
+
+   <include layout="@layout/app_bar_main"
+       android:id="@+id/my_toolbar"></include>
+   <!-- <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/my_toolbar"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        >
+
+    </android.support.v7.widget.Toolbar>-->
+
+    <android.support.design.widget.TabLayout
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:id="@+id/tab_layout"
+        android:layout_gravity="center"
+        app:tabTextAppearance="@style/tabAppearance"
+        app:tabTextColor="#000"
+        app:tabSelectedTextColor="#F24"
+        app:tabIndicatorHeight="0dp"
+        android:layout_below="@+id/tool">
+    </android.support.design.widget.TabLayout>
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_pager"
+        android:layout_below="@+id/tab_layout">
+
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>
