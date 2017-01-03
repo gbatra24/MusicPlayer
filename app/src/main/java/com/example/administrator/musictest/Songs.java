@@ -28,7 +28,29 @@ public class Songs {
         album = albumName;
         albumID = albumId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Songs songs = (Songs) o;
+
+        return albumID.equals(songs.albumID);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (artist != null ? artist.hashCode() : 0);
+        result = 31 * result + (album != null ? album.hashCode() : 0);
+        result = 31 * result + (albumID != null ? albumID.hashCode() : 0);
+        return result;
+    }
     /*
+
     public Songs(long albumID, String albumName) {
         id = albumID;
         album = albumName;

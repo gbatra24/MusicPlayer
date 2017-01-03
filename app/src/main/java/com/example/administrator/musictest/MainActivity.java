@@ -46,10 +46,15 @@ public class MainActivity  extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+       /* SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
         return true;
     }
 
-  @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //menu item selected
 

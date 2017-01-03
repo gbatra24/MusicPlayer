@@ -20,6 +20,7 @@ import android.widget.GridView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 
 /**
  * Created by Gagan on 11/21/2016.
@@ -37,6 +38,7 @@ public class AlbumFragment extends Fragment {
         albumView = (GridView) view.findViewById(R.id.albums_list);
 
         albumList = new ArrayList<Songs>();
+        //albumList = new ArrayList<Songs>(new LinkedHashSet<Songs>(albumList));
         getSongList();
         return view;
     }
@@ -100,6 +102,7 @@ public class AlbumFragment extends Fragment {
                 albumList.add(new Songs(thisID,thisAlbum,thisAlbumId));
             }while (musicCursor.moveToNext());
 
+            albumList = new ArrayList<Songs>(new LinkedHashSet<Songs>(albumList));
             Collections.sort(albumList, new Comparator<Songs>() {
                 @Override
                 public int compare(Songs a, Songs b) {
@@ -107,9 +110,9 @@ public class AlbumFragment extends Fragment {
                 }
             });
 
+            albumList = new ArrayList<Songs>(new LinkedHashSet<Songs>(albumList));
             AlbumAdapter albumAdt = new AlbumAdapter(this.getActivity(), albumList);
             albumView.setAdapter(albumAdt);
         }
-
     }
 }
