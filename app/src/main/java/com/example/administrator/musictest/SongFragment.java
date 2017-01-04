@@ -182,25 +182,26 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        if(musicSrv.isPlaying()){
+            musicSrv.pausePlayer();
+        }
+        else {
+
+            Intent musicPlayerIntent = new Intent(this.getActivity(),PlayerActivity.class);
+
+            String songTitle = songList.get(position).getTitle();
+            musicPlayerIntent.putExtra("songTitle",songTitle);
+
+            String tag = view.getTag().toString();
+            musicPlayerIntent.putExtra("tag",tag);
+
+            String songArtist = songList.get(position).getArtist();
+            musicPlayerIntent.putExtra("songArtist",songArtist);
+
+            startActivity(musicPlayerIntent);
 
 
-        Intent musicPlayerIntent = new Intent(this.getActivity(),PlayerActivity.class);
-
-        String songTitle = songList.get(position).getTitle();
-        musicPlayerIntent.putExtra("songTitle",songTitle);
-
-        String tag = view.getTag().toString();
-        musicPlayerIntent.putExtra("tag",tag);
-
-        String songArtist = songList.get(position).getArtist();
-        musicPlayerIntent.putExtra("songArtist",songArtist);
-
-
-
-        //String coverPathSong = fetchAlbumArt();
-        //musicPlayerIntent.putExtra("coverPath",coverPathSong);
-
-        startActivity(musicPlayerIntent);
+        }
 
     }
 
