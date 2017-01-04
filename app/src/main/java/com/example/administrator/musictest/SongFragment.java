@@ -34,12 +34,12 @@ import static android.content.Context.BIND_AUTO_CREATE;
  */
 public class SongFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
-    private ArrayList<Songs> songList;
+    private ArrayList<Song> songList;
     private ListView songView;
     private MusicService musicSrv;
     private boolean musicBound = false;
     private Intent playIntent;
-    Songs mSong;
+    Song mSong;
     private String coverPath;
     private EditText searchBox;
     private SongAdapter songAdt;
@@ -50,7 +50,7 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
         View view = inflater.inflate(R.layout.songs_fragment, container,false);
 
         songView = (ListView) view.findViewById(R.id.songs_list);
-        songList = new ArrayList<Songs>();
+        songList = new ArrayList<Song>();
         //searchBox = (EditText) view.findViewById(R.id.search_box);
 
         getSongList();
@@ -149,12 +149,12 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
                     thisAlbumId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
                 }
 
-                songList.add(new Songs(thisID,thisTitle,thisArtist,thisAlbumId));
+                songList.add(new Song(thisID,thisTitle,thisArtist,thisAlbumId));
             }while (musicCursor.moveToNext());
 
-            Collections.sort(songList, new Comparator<Songs>() {
+            Collections.sort(songList, new Comparator<Song>() {
                 @Override
-                public int compare(Songs a, Songs b) {
+                public int compare(Song a, Song b) {
                     return a.getTitle().compareTo(b.getTitle());
                 }
             });

@@ -25,7 +25,7 @@ public class MusicService extends Service implements
         MediaPlayer.OnCompletionListener {
 
     private MediaPlayer player;
-    private ArrayList<Songs> songs;
+    private ArrayList<Song> songs;
     private int songPosn, length;
     private final IBinder musicBind = new MusicBinder();
     private Random random;
@@ -39,7 +39,7 @@ public class MusicService extends Service implements
         initMusicPlayer();
     }
 
-    public void setList(ArrayList<Songs> theSongs) {
+    public void setList(ArrayList<Song> theSongs) {
         songs = theSongs;
     }
 
@@ -50,11 +50,11 @@ public class MusicService extends Service implements
         }
     }
 
-    public Songs getCurrentPlayingSong() {
+    public Song getCurrentPlayingSong() {
         return songs.get(songPosn);
     }
 
-    public Songs getSong(int position) {
+    public Song getSong(int position) {
         return songs.get(position);
     }
 
@@ -137,7 +137,7 @@ public class MusicService extends Service implements
 
         player.reset();
 
-        Songs playSong = songs.get(songPosn);
+        Song playSong = songs.get(songPosn);
 
         long currSong = playSong.getId();
 

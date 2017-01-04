@@ -18,10 +18,10 @@ import java.util.ArrayList;
 
 public class SongAdapter extends BaseAdapter {
 
-    private ArrayList<Songs> songs;
+    private ArrayList<Song> songs;
     private LayoutInflater songInflator;
 
-    public SongAdapter(Context c, ArrayList<Songs> theSong) {
+    public SongAdapter(Context c, ArrayList<Song> theSong) {
         songs = theSong;
         songInflator = LayoutInflater.from(c);
     }
@@ -47,7 +47,7 @@ public class SongAdapter extends BaseAdapter {
         TextView songView = (TextView) songLay.findViewById(R.id.song_title);
         TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
         ImageView songCoverView = (ImageView) songLay.findViewById(R.id.song_list_album_cover);
-        Songs currentSong = songs.get(position);
+        Song currentSong = songs.get(position);
         songView.setText(currentSong.getTitle());
         artistView.setText(currentSong.getArtist());
         Drawable drawable = Drawable.createFromPath(currentSong.getAlbumId());

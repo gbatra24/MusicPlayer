@@ -28,7 +28,7 @@ import java.util.LinkedHashSet;
 public class AlbumFragment extends Fragment {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
-    private ArrayList<Songs> albumList;
+    private ArrayList<Song> albumList;
     private GridView albumView;
 
     @Nullable
@@ -37,8 +37,8 @@ public class AlbumFragment extends Fragment {
         View view = inflater.inflate(R.layout.album_fragment, container,false);
         albumView = (GridView) view.findViewById(R.id.albums_list);
 
-        albumList = new ArrayList<Songs>();
-        //albumList = new ArrayList<Songs>(new LinkedHashSet<Songs>(albumList));
+        albumList = new ArrayList<Song>();
+        //albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
         getSongList();
         return view;
     }
@@ -99,18 +99,18 @@ public class AlbumFragment extends Fragment {
                     thisAlbumId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
                 }
 
-                albumList.add(new Songs(thisID,thisAlbum,thisAlbumId));
+                albumList.add(new Song(thisID,thisAlbum,thisAlbumId));
             }while (musicCursor.moveToNext());
 
-            albumList = new ArrayList<Songs>(new LinkedHashSet<Songs>(albumList));
-            Collections.sort(albumList, new Comparator<Songs>() {
+            albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
+            Collections.sort(albumList, new Comparator<Song>() {
                 @Override
-                public int compare(Songs a, Songs b) {
+                public int compare(Song a, Song b) {
                     return a.getAlbum().compareTo(b.getAlbum());
                 }
             });
 
-            albumList = new ArrayList<Songs>(new LinkedHashSet<Songs>(albumList));
+            albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
             AlbumAdapter albumAdt = new AlbumAdapter(this.getActivity(), albumList);
             albumView.setAdapter(albumAdt);
         }

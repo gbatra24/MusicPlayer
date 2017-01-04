@@ -4,7 +4,7 @@ package com.example.administrator.musictest;
  * Created by Gagan on 11/16/2016.
  */
 
-public class Songs {
+public class Song {
 
     private long id;
     private String title;
@@ -12,18 +12,18 @@ public class Songs {
     private String album;
     private String albumID;
 
-    public Songs(long songID , String songTitle, String artistName, String albumId) {
+    public Song(long songID , String songTitle, String artistName, String albumId) {
         id = songID;
         title = songTitle;
         artist = artistName;
         albumID = albumId;
     }
-    public Songs(long artistID , String artistName) {
+    public Song(long artistID , String artistName) {
         id = artistID;
         artist = artistName;
     }
 
-    public Songs(long thisId, String albumName, String albumId) {
+    public Song(long thisId, String albumName, String albumId) {
         id = thisId;
         album = albumName;
         albumID = albumId;
@@ -34,9 +34,9 @@ public class Songs {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Songs songs = (Songs) o;
+        Song song = (Song) o;
 
-        return albumID.equals(songs.albumID);
+        return albumID.equals(song.albumID);
 
     }
 
@@ -51,7 +51,7 @@ public class Songs {
     }
     /*
 
-    public Songs(long albumID, String albumName) {
+    public Song(long albumID, String albumName) {
         id = albumID;
         album = albumName;
     }*/

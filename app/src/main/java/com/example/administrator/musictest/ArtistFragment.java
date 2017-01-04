@@ -27,7 +27,7 @@ import java.util.Comparator;
 public class ArtistFragment extends Fragment {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
-    private ArrayList<Songs> artistList;
+    private ArrayList<Song> artistList;
     private ListView artistView;
 
     @Nullable
@@ -36,7 +36,7 @@ public class ArtistFragment extends Fragment {
         View view = inflater.inflate(R.layout.artist_fragment, container,false);
         artistView = (ListView) view.findViewById(R.id.artists_list);
 
-        artistList = new ArrayList<Songs>();
+        artistList = new ArrayList<Song>();
 
         getSongList();
         return view;
@@ -84,12 +84,12 @@ public class ArtistFragment extends Fragment {
                 long thisID = musicCursor.getLong(idColumn);
                 //String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
-                artistList.add(new Songs(thisID,thisArtist));
+                artistList.add(new Song(thisID,thisArtist));
             }while (musicCursor.moveToNext());
 
-            Collections.sort(artistList, new Comparator<Songs>() {
+            Collections.sort(artistList, new Comparator<Song>() {
                 @Override
-                public int compare(Songs a, Songs b) {
+                public int compare(Song a, Song b) {
                     return a.getArtist().compareTo(b.getArtist());
                 }
             });

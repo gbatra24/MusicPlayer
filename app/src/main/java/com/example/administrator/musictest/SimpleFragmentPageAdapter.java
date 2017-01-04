@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 
 public class SimpleFragmentPageAdapter extends FragmentPagerAdapter {
-    private String[] tabtitle=new String[]{"Songs", "Albums", "Artists"};
+    private String[] tabtitle=new String[]{"Song", "Albums", "Artists"};
     Context context;
     private int pagecount=3;
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class MainActivity  extends AppCompatActivity {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
-    private ArrayList<Songs> songList;
+    private ArrayList<Song> songList;
     private ListView songView;
     private MusicService musicSrv;
     private Intent playIntent;

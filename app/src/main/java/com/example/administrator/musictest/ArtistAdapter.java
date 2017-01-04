@@ -16,10 +16,10 @@ import java.util.ArrayList;
 
 public class ArtistAdapter extends BaseAdapter {
 
-    private ArrayList<Songs> artists;
+    private ArrayList<Song> artists;
     private LayoutInflater artistInflator;
 
-    public ArtistAdapter(Context c, ArrayList<Songs> theArtist) {
+    public ArtistAdapter(Context c, ArrayList<Song> theArtist) {
         artists = theArtist;
         artistInflator = LayoutInflater.from(c);
     }
@@ -43,7 +43,7 @@ public class ArtistAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LinearLayout artistLay = (LinearLayout) artistInflator.inflate(R.layout.artist_list_item, parent, false);
         TextView artistView = (TextView) artistLay.findViewById(R.id.artist_view);
-        Songs currentSong = artists.get(position);
+        Song currentSong = artists.get(position);
         artistView.setText(currentSong.getArtist());
         artistLay.setTag(position);
         return artistLay;

@@ -38,7 +38,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     private Intent playIntent;
 
     MusicService musicService;
-    private ArrayList<Songs> songs;
+    private ArrayList<Song> songs;
     TextView textViewTitle, textViewArtist,textViewSongDuration;
     private Handler mHandler;
     //Bitmap bitMap;
@@ -216,7 +216,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
             String currentPosition = String.valueOf(musicService.getPosn())+"/"+songDurationString;
             textViewSongDuration.setText(currentPosition);
 
-//            Songs currentPlayingSong = musicService.getSong(songPosn);
+//            Song currentPlayingSong = musicService.getSong(songPosn);
 //            Drawable drawable = Drawable.createFromPath(currentPlayingSong.getAlbumId());
 //            albumCover.setImageDrawable(drawable);
 //            updateProgressBar();
@@ -245,6 +245,10 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
             String updateArtist = musicService.updateArtist();
             textViewArtist.setText(updateArtist);
+
+            Song currentPlayingSong = musicService.getCurrentPlayingSong();
+            Drawable drawable = Drawable.createFromPath(currentPlayingSong.getAlbumId());
+            albumCover.setImageDrawable(drawable);
 
             mHandler.postDelayed(this, 1000);
         }
@@ -275,7 +279,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
         updateProgressBar();
 
-        Songs currentPlayingSong = musicService.getCurrentPlayingSong();
+        Song currentPlayingSong = musicService.getCurrentPlayingSong();
         Drawable drawable = Drawable.createFromPath(currentPlayingSong.getAlbumId());
         albumCover.setImageDrawable(drawable);
     }
