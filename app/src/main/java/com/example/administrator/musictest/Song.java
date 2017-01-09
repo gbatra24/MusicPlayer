@@ -18,6 +18,7 @@ public class Song {
         artist = artistName;
         albumID = albumId;
     }
+
     public Song(long artistID , String artistName) {
         id = artistID;
         artist = artistName;

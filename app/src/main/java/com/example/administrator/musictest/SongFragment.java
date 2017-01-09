@@ -95,7 +95,6 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
         }
     };
 
-
     public void getSongList() {
 
         int permissionCheckRead = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -165,20 +164,6 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
 }
-    /*public String fetchAlbumArt() {
-        Cursor albumCursor = getActivity().managedQuery(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
-                MediaStore.Audio.Albums._ID+ "=?",
-                new String[] {String.valueOf(MediaStore.Audio.Media.ALBUM_ID)},
-                null);
-
-        String coverPaths = "";
-        if (albumCursor.moveToFirst()) {
-            coverPaths = ""+albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
-        }
-        return coverPaths;
-    }*/
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 

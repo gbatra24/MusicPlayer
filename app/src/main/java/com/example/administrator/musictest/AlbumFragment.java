@@ -2,6 +2,7 @@ package com.example.administrator.musictest;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.LinkedHashSet;
 /**
  * Created by Gagan on 11/21/2016.
  */
-public class AlbumFragment extends Fragment {
+public class AlbumFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Song> albumList;
@@ -39,11 +41,12 @@ public class AlbumFragment extends Fragment {
 
         albumList = new ArrayList<Song>();
         //albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
-        getSongList();
+        getAlbumList();
+        albumView.setOnItemClickListener(this);
         return view;
     }
 
-    public void getSongList() {
+    public void getAlbumList() {
 
         int permissionCheckRead = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permissionCheckRead != PackageManager.PERMISSION_GRANTED) {
@@ -53,7 +56,7 @@ public class AlbumFragment extends Fragment {
         else {
             /*ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     MY_READ_EXTERNAL_PERMISSION_CONSTANT);*/
-            fillSongAdapter();
+            fillAlbumAdapter();
         }
     }
 
@@ -62,7 +65,7 @@ public class AlbumFragment extends Fragment {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == MY_READ_EXTERNAL_PERMISSION_CONSTANT){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                fillSongAdapter();
+                fillAlbumAdapter();
             }
         }
         else {
@@ -71,7 +74,7 @@ public class AlbumFragment extends Fragment {
 
     }
 
-    private void fillSongAdapter() {
+    private void fillAlbumAdapter() {
         ContentResolver musicResolver = getActivity().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Uri albumUri = android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
@@ -114,5 +117,18 @@ public class AlbumFragment extends Fragment {
             AlbumAdapter albumAdt = new AlbumAdapter(this.getActivity(), albumList);
             albumView.setAdapter(albumAdt);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent songListIntent = new Intent(this.getActivity(),AlbumSongListActivity.class);
+
+        String pos = String.valueOf(position);
+        songListIntent.putExtra("pos",pos);
+
+        String ID = String.valueOf(id);
+        songListIntent.putExtra("id",ID);
+
+        startActivity(songListIntent);
     }
 }
