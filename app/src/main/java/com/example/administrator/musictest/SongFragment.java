@@ -95,6 +95,10 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
         }
     };
 
+    public ArrayList<Song> fetchList() {
+        return songList;
+    }
+
     public void getSongList() {
 
         int permissionCheckRead = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);

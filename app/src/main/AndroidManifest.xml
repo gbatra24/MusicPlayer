@@ -16,7 +16,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <meta-data
-                android:name="android.app.searchable"
+                android:name="android.app.searchable" android:value="com.example.administrator.musictest.MainActivity"
                 android:resource="@xml/searchable" />
 
             <intent-filter>

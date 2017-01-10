@@ -1,11 +1,16 @@
 package com.example.administrator.musictest;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -16,7 +21,7 @@ import java.util.ArrayList;
  * Created by Gagan on 11/16/2016.
  */
 
-public class MainActivity  extends AppCompatActivity {
+public class MainActivity  extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Song> songList;
@@ -24,6 +29,7 @@ public class MainActivity  extends AppCompatActivity {
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
+    private SongAdapter songAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +53,13 @@ public class MainActivity  extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-       /* SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(this);
+        //searchView.setOnCloseListener(this);
+        searchView.setSubmitButtonEnabled(true);
         return true;
     }
 
@@ -68,7 +77,20 @@ public class MainActivity  extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
 
-
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if(TextUtils.isEmpty(newText)){
+            songAdapter.getFilter().filter(newText);
+        }
+        else {
+            songAdapter.getFilter().filter(newText.toString());
+        }
+        return true;
+    }
 
 }
