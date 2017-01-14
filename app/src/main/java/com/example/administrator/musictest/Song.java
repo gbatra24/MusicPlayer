@@ -30,7 +30,7 @@ public class Song {
         albumID = albumId;
     }
 
-    @Override
+    /*@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -49,7 +49,7 @@ public class Song {
         result = 31 * result + (album != null ? album.hashCode() : 0);
         result = 31 * result + (albumID != null ? albumID.hashCode() : 0);
         return result;
-    }
+    }*/
     /*
 
     public Song(long albumID, String albumName) {

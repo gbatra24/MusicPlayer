@@ -1,15 +1,14 @@
 package com.example.administrator.musictest;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,49 +17,15 @@ import java.util.ArrayList;
  * Created by Gagan on 11/17/2016.
  */
 
-public class SongAdapter extends BaseAdapter implements Filterable{
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> implements Filterable{
 
     private ArrayList<Song> songs;
     private ArrayList<Song> filteredList;
     private LayoutInflater songInflator;
     private SongFilter songFilter;
 
-    public SongAdapter(Context c, ArrayList<Song> theSong) {
+    public SongAdapter(ArrayList<Song> theSong) {
         songs = theSong;
-        filteredList = theSong;
-        songInflator = LayoutInflater.from(c);
-        getFilter();
-    }
-
-    @Override
-    public int getCount() {
-        return songs.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return songs.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LinearLayout songLay = (LinearLayout) songInflator.inflate(R.layout.song_list_item, parent, false);
-        TextView songView = (TextView) songLay.findViewById(R.id.song_title);
-        TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
-        ImageView songCoverView = (ImageView) songLay.findViewById(R.id.song_list_album_cover);
-        Song currentSong = songs.get(position);
-        songView.setText(currentSong.getTitle());
-        artistView.setText(currentSong.getArtist());
-        Drawable drawable = Drawable.createFromPath(currentSong.getAlbumId());
-        //BitmapDrawable bit = (BitmapDrawable) BitmapDrawable.createFromPath(currentSong.getAlbumId());
-        songCoverView.setImageDrawable(drawable);
-        songLay.setTag(position);
-        return songLay;
     }
 
     @Override
@@ -69,6 +34,40 @@ public class SongAdapter extends BaseAdapter implements Filterable{
             songFilter = new SongFilter();
         }
         return songFilter;
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView songView,artistView;
+        public ImageView songCoverView;
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            songView = (TextView) itemView.findViewById(R.id.song_title);
+            artistView = (TextView) itemView.findViewById(R.id.song_artist);
+            songCoverView = (ImageView) itemView.findViewById(R.id.song_list_album_cover);
+        }
+    }
+
+    @Override
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.song_list_item, parent, false);
+        return new MyViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        Song currentSong = songs.get(position);
+        holder.songView.setText(currentSong.getTitle());
+        holder.artistView.setText(currentSong.getArtist());
+        //Drawable drawable = Drawable.createFromPath(currentSong.getAlbumId());
+        //BitmapDrawable drawable = (BitmapDrawable) BitmapDrawable.createFromPath(currentSong.getAlbumId());
+        Bitmap bit = BitmapFactory.decodeFile(currentSong.getAlbumId());
+        holder.songCoverView.setImageBitmap(bit);
+    }
+
+    @Override
+    public int getItemCount() {
+        return songs.size();
     }
 
     private class SongFilter extends Filter {

@@ -16,12 +16,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 public class SongFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Song> songList;
-    private ListView songView;
+    private RecyclerView songView;
     private MusicService musicSrv;
     private boolean musicBound = false;
     private Intent playIntent;
@@ -49,14 +50,14 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.songs_fragment, container,false);
 
-        songView = (ListView) view.findViewById(R.id.songs_list);
+        songView = (RecyclerView) view.findViewById(R.id.songs_list);
         songList = new ArrayList<Song>();
         //searchBox = (EditText) view.findViewById(R.id.search_box);
 
         getSongList();
         //fetchAlbumArt();
 
-        songView.setOnItemClickListener(this);
+       // songView.setOnItemClickListener(this);
         //searchBox.addTextChangedListener(this);
         return view;
     }
@@ -162,7 +163,9 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
                 }
             });
 
-            songAdt = new SongAdapter(this.getActivity(), songList);
+            songAdt = new SongAdapter( songList);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+            songView.setLayoutManager(mLayoutManager);
             songView.setAdapter(songAdt);
 
     }

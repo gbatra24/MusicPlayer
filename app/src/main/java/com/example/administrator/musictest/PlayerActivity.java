@@ -25,21 +25,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class PlayerActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    Toolbar myToolbar;
-    MediaPlayer mediaPlayer;
-    ImageButton playpause, next, previous,shuffle;
-    ImageView albumCover;
-    SeekBar progressSeekbar;
-    AudioManager audioManager;
-    String songDurationString;
+    private Toolbar myToolbar;
+    private MediaPlayer mediaPlayer;
+    private ImageButton playpause, next, previous,shuffle;
+    private ImageView albumCover;
+    private SeekBar progressSeekbar;
+    private AudioManager audioManager;
+    private String songDurationString;
     private int songPosn;
     private boolean musicBound = false, shuffledPlayFlag = false;
 
     private Intent playIntent;
 
-    MusicService musicService;
+    private MusicService musicService;
     private ArrayList<Song> songs;
-    TextView textViewTitle, textViewArtist,textViewSongDuration;
+    private TextView textViewTitle, textViewArtist,textViewSongDuration;
     private Handler mHandler;
     //Bitmap bitMap;
 

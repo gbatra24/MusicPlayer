@@ -17,10 +17,10 @@ import java.util.ArrayList;
  */
 
 public class AlbumAdapter extends BaseAdapter {
-    private ArrayList<Song> albums;
+    private ArrayList<Album> albums;
     private LayoutInflater albumInflator;
 
-    public AlbumAdapter(Context c, ArrayList<Song> theAlbum) {
+    public AlbumAdapter(Context c, ArrayList<Album> theAlbum) {
         albums = theAlbum;
         albumInflator = LayoutInflater.from(c);
     }
@@ -45,9 +45,9 @@ public class AlbumAdapter extends BaseAdapter {
         LinearLayout albumLay = (LinearLayout) albumInflator.inflate(R.layout.album_list_item, parent, false);
         TextView albumView = (TextView) albumLay.findViewById(R.id.album_view);
         ImageView albumCoverView = (ImageView) albumLay.findViewById(R.id.album_list_cover_view);
-        Song currentSong = albums.get(position);
-        albumView.setText(currentSong.getAlbum());
-        Drawable drawable = Drawable.createFromPath(currentSong.getAlbumId());
+        Album currentAlbum = albums.get(position);
+        albumView.setText(currentAlbum.getAlbumName());
+        Drawable drawable = Drawable.createFromPath(currentAlbum.getAlbumID());
         albumCoverView.setImageDrawable(drawable);
         albumCoverView.setScaleType(ImageView.ScaleType.FIT_XY);
         albumLay.setTag(position);

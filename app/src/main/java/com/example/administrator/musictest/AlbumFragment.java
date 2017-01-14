@@ -22,7 +22,6 @@ import android.widget.GridView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 
 /**
  * Created by Gagan on 11/21/2016.
@@ -30,7 +29,7 @@ import java.util.LinkedHashSet;
 public class AlbumFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
-    private ArrayList<Song> albumList;
+    private ArrayList<Album> albumList;
     private GridView albumView;
 
     @Nullable
@@ -39,7 +38,7 @@ public class AlbumFragment extends Fragment implements AdapterView.OnItemClickLi
         View view = inflater.inflate(R.layout.album_fragment, container,false);
         albumView = (GridView) view.findViewById(R.id.albums_list);
 
-        albumList = new ArrayList<Song>();
+        albumList = new ArrayList<Album>();
         //albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
         getAlbumList();
         albumView.setOnItemClickListener(this);
@@ -78,20 +77,25 @@ public class AlbumFragment extends Fragment implements AdapterView.OnItemClickLi
         ContentResolver musicResolver = getActivity().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Uri albumUri = android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = musicResolver.query(musicUri,null,null,null,null);
+        Cursor musicCursor = musicResolver.query(albumUri,
+                new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM},
+                MediaStore.Audio.AudioColumns.ALBUM + "=?",null,null);
 
         if(musicCursor!=null && musicCursor.moveToFirst()) {
-            //int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
             int albumColumn = musicCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM);
             int albumArtColumn = musicCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID);
-
+            int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
 
             do {
                 long thisID = musicCursor.getLong(idColumn);
-                //String thisTitle = musicCursor.getString(titleColumn);
+                String thisTitle = musicCursor.getString(titleColumn);
                 String thisAlbum = musicCursor.getString(albumColumn);
                 String thisAlbumId = musicCursor.getString(albumArtColumn);
+                String thisArtist = musicCursor.getString(artistColumn);
+
+
 
                 Cursor albumCursor = musicResolver.query(albumUri,
                         new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
@@ -102,18 +106,31 @@ public class AlbumFragment extends Fragment implements AdapterView.OnItemClickLi
                     thisAlbumId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
                 }
 
-                albumList.add(new Song(thisID,thisAlbum,thisAlbumId));
+/*
+                Cursor albumNameCursor = musicResolver.query(albumUri,
+                        new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM},
+                        MediaStore.Audio.Albums._ID+ "=?",
+                        new String[] {String.valueOf(thisAlbumId)},
+                        null);
+
+                if (albumNameCursor != null && albumNameCursor.moveToFirst()) {
+                    thisAlbumId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ID));
+                }
+
+
+*/
+
+                albumList.add(new Album(thisAlbumId,thisAlbum,thisTitle,thisArtist));
             }while (musicCursor.moveToNext());
 
-            albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
-            Collections.sort(albumList, new Comparator<Song>() {
+            Collections.sort(albumList, new Comparator<Album>() {
                 @Override
-                public int compare(Song a, Song b) {
-                    return a.getAlbum().compareTo(b.getAlbum());
+                public int compare(Album a, Album b) {
+                    return a.getAlbumName().compareTo(b.getAlbumName());
                 }
             });
 
-            albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
+           // albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
             AlbumAdapter albumAdt = new AlbumAdapter(this.getActivity(), albumList);
             albumView.setAdapter(albumAdt);
         }
