@@ -4,7 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -251,8 +252,15 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
             textViewArtist.setText(updateArtist);
 
             Song currentPlayingSong = musicService.getCurrentPlayingSong();
-            Drawable drawable = Drawable.createFromPath(currentPlayingSong.getAlbumId());
-            albumCover.setImageDrawable(drawable);
+            /*Drawable drawable = Drawable.createFromPath(currentPlayingSong.getAlbumId());
+            albumCover.setImageDrawable(drawable);*/
+            Bitmap bit = BitmapFactory.decodeFile(currentPlayingSong.getAlbumId());
+            if(bit != null ) {
+                albumCover.setImageBitmap(bit);
+            }
+            else {
+                albumCover.setImageResource(R.drawable.default_cover);
+            }
 
             mHandler.postDelayed(this, 1000);
         }
@@ -284,8 +292,15 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         updateProgressBar();
 
         Song currentPlayingSong = musicService.getCurrentPlayingSong();
-        Drawable drawable = Drawable.createFromPath(currentPlayingSong.getAlbumId());
-        albumCover.setImageDrawable(drawable);
+        /*Drawable drawable = Drawable.createFromPath(currentPlayingSong.getAlbumId());
+        albumCover.setImageDrawable(drawable);*/
+        Bitmap bit = BitmapFactory.decodeFile(currentPlayingSong.getAlbumId());
+        if(bit != null ) {
+            albumCover.setImageBitmap(bit);
+        }
+        else {
+            albumCover.setImageResource(R.drawable.default_cover);
+        }
     }
 
     public void playNextSong() throws IOException {

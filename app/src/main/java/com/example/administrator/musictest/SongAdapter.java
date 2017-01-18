@@ -62,13 +62,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         //Drawable drawable = Drawable.createFromPath(currentSong.getAlbumId());
         //BitmapDrawable drawable = (BitmapDrawable) BitmapDrawable.createFromPath(currentSong.getAlbumId());
         Bitmap bit = BitmapFactory.decodeFile(currentSong.getAlbumId());
-       /* if(bit != null ) {
+        if(bit != null ) {
             holder.songCoverView.setImageBitmap(bit);
         }
         else {
-            holder.songCoverView.setImageResource(R.drawable.bg);
-        }*/
-        holder.songCoverView.setImageBitmap(bit);
+            holder.songCoverView.setImageResource(R.drawable.default_cover);
+        }
+        //holder.songCoverView.setImageBitmap(bit);
 
     }
 
