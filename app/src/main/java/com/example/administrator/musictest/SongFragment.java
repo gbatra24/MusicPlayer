@@ -3,6 +3,7 @@ package com.example.administrator.musictest;
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -18,10 +19,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 /**
  * Created by Gagan on 11/21/2016.
  */
-public class SongFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class SongFragment extends Fragment {
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Song> songList;
     private RecyclerView songView;
@@ -48,7 +50,7 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.songs_fragment, container,false);
+        View view = inflater.inflate(R.layout.songs_fragment, container, false);
 
         songView = (RecyclerView) view.findViewById(R.id.songs_list);
         songList = new ArrayList<Song>();
@@ -56,17 +58,46 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
 
         getSongList();
         //fetchAlbumArt();
+        songView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), songView, new ClickListener() {
+            @Override
+            public void onClick(View childView, int Position) {
+                //Toast.makeText(getActivity(),"onClick "+Position,Toast.LENGTH_SHORT).show();
+                if(musicSrv.isPlaying()){
+                    musicSrv.pausePlayer();
+                }
+                else {
 
-       // songView.setOnItemClickListener(this);
+                    Intent musicPlayerIntent = new Intent(getActivity(),PlayerActivity.class);
+
+                    String songTitle = songList.get(Position).getTitle();
+                    musicPlayerIntent.putExtra("songTitle",songTitle);
+
+                    String mPosition = String.valueOf(Position);
+                    musicPlayerIntent.putExtra("mPosition", mPosition);
+
+                  /*  String tag = childView.getTag().toString();
+                    musicPlayerIntent.putExtra("tag",tag);*/
+
+                    String songArtist = songList.get(Position).getArtist();
+                    musicPlayerIntent.putExtra("songArtist",songArtist);
+
+                    startActivity(musicPlayerIntent);
+
+
+                }
+            }
+        }));
+
+        // songView.setOnItemClickListener(this);
         //searchBox.addTextChangedListener(this);
         return view;
     }
 
     public void onStart() {
         super.onStart();
-        if(playIntent == null) {
-            playIntent = new Intent(getActivity(),MusicService.class);
-            this.getActivity().bindService(playIntent, musicConnection,BIND_AUTO_CREATE);
+        if (playIntent == null) {
+            playIntent = new Intent(getActivity(), MusicService.class);
+            this.getActivity().bindService(playIntent, musicConnection, BIND_AUTO_CREATE);
             this.getActivity().startService(playIntent);
         }
     }
@@ -75,15 +106,15 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onDestroy() {
         musicSrv.stopService(playIntent);
         this.getActivity().unbindService(musicConnection);
-        musicSrv=null;
+        musicSrv = null;
         super.onDestroy();
     }
 
-    private ServiceConnection musicConnection = new ServiceConnection(){
+    private ServiceConnection musicConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
 
             musicSrv = binder.getService();
             musicSrv.setList(songList);
@@ -104,10 +135,9 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
 
         int permissionCheckRead = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permissionCheckRead != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     MY_READ_EXTERNAL_PERMISSION_CONSTANT);
-        }
-        else {
+        } else {
             fillSongAdapter();
         }
     }
@@ -115,24 +145,23 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == MY_READ_EXTERNAL_PERMISSION_CONSTANT){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    fillSongAdapter();
-                }
+        if (requestCode == MY_READ_EXTERNAL_PERMISSION_CONSTANT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                fillSongAdapter();
             }
-            else {
-                System.out.println("Permission is denied............................");
-            }
-
+        } else {
+            System.out.println("Permission is denied............................");
         }
+
+    }
 
     public void fillSongAdapter() {
         ContentResolver musicResolver = getActivity().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Uri albumUri = android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = musicResolver.query(musicUri,null,null,null,null);
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
 
-        if(musicCursor!=null && musicCursor.moveToFirst()) {
+        if (musicCursor != null && musicCursor.moveToFirst()) {
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
@@ -145,16 +174,16 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
                 String thisAlbumId = musicCursor.getString(albumArtColumn);
 
                 Cursor albumCursor = musicResolver.query(albumUri,
-                        new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
-                        MediaStore.Audio.Albums._ID+ "=?",
-                        new String[] {String.valueOf(thisAlbumId)},
+                        new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
+                        MediaStore.Audio.Albums._ID + "=?",
+                        new String[]{String.valueOf(thisAlbumId)},
                         null);
                 if (albumCursor != null && albumCursor.moveToFirst()) {
                     thisAlbumId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
                 }
 
-                songList.add(new Song(thisID,thisTitle,thisArtist,thisAlbumId));
-            }while (musicCursor.moveToNext());
+                songList.add(new Song(thisID, thisTitle, thisArtist, thisAlbumId));
+            } while (musicCursor.moveToNext());
 
             Collections.sort(songList, new Comparator<Song>() {
                 @Override
@@ -163,15 +192,16 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
                 }
             });
 
-            songAdt = new SongAdapter( songList);
+            songAdt = new SongAdapter(songList);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             songView.setLayoutManager(mLayoutManager);
             songView.setAdapter(songAdt);
 
-    }
 
-}
-    @Override
+        }
+
+    }
+   /* @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         if(musicSrv.isPlaying()){
@@ -195,6 +225,51 @@ public class SongFragment extends Fragment implements AdapterView.OnItemClickLis
 
         }
 
+    }
+*/
+    class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+       private GestureDetector gestureDetector;
+       private ClickListener clickListener;
+
+       public RecyclerTouchListener(Context context, RecyclerView recyclerView, ClickListener clickListener){
+           this.clickListener = clickListener;
+           gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return  true;
+                    //return super.onSingleTapUp(e);
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    super.onLongPress(e);
+                }
+            });
+       }
+
+       @Override
+       public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+           View child = rv.findChildViewUnder(e.getX(),e.getY());
+           if(child!=null && clickListener!=null && gestureDetector.onTouchEvent(e)) {
+               clickListener.onClick(child, rv.getChildAdapterPosition(child));
+               return true;
+           }
+           return false;
+       }
+
+       @Override
+       public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+       }
+
+       @Override
+       public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+       }
+   }
+    public static interface ClickListener {
+        public void onClick(View childView, int Position);
+        //public void onLongClick(View childView, int Position);
     }
 
 }

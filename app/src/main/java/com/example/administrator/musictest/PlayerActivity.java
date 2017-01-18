@@ -41,6 +41,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     private ArrayList<Song> songs;
     private TextView textViewTitle, textViewArtist,textViewSongDuration;
     private Handler mHandler;
+    int mPosition;
     //Bitmap bitMap;
 
     @Override
@@ -77,8 +78,10 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         String receivedSongArtist = getIntent().getStringExtra("songArtist");
         textViewArtist.setText(receivedSongArtist);
 
-        String receivedTag = getIntent().getStringExtra("tag");
-        songPosn = Integer.parseInt(receivedTag);
+        mPosition = Integer.parseInt(getIntent().getStringExtra("mPosition"));
+
+       /* String receivedTag = getIntent().getStringExtra("tag");
+        songPosn = Integer.parseInt(receivedTag);*/
 
         //String coverPath = getIntent().getStringExtra("coverPath");
         progressSeekbar.setOnSeekBarChangeListener(this);
@@ -204,6 +207,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicService = binder.getService();
+            songPosn = mPosition;
 
             try {
                 musicService.setSong(songPosn);

@@ -36,6 +36,8 @@
         android:id="@+id/song_artist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="#555"
         android:textSize="11sp"/>
 
