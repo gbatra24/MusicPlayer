@@ -58,35 +58,6 @@ public class SongFragment extends Fragment {
 
         getSongList();
         //fetchAlbumArt();
-        songView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), songView, new ClickListener() {
-            @Override
-            public void onClick(View childView, int Position) {
-                //Toast.makeText(getActivity(),"onClick "+Position,Toast.LENGTH_SHORT).show();
-                if(musicSrv.isPlaying()){
-                    musicSrv.pausePlayer();
-                }
-                else {
-
-                    Intent musicPlayerIntent = new Intent(getActivity(),PlayerActivity.class);
-
-                    String songTitle = songList.get(Position).getTitle();
-                    musicPlayerIntent.putExtra("songTitle",songTitle);
-
-                    String mPosition = String.valueOf(Position);
-                    musicPlayerIntent.putExtra("mPosition", mPosition);
-
-                  /*  String tag = childView.getTag().toString();
-                    musicPlayerIntent.putExtra("tag",tag);*/
-
-                    String songArtist = songList.get(Position).getArtist();
-                    musicPlayerIntent.putExtra("songArtist",songArtist);
-
-                    startActivity(musicPlayerIntent);
-
-
-                }
-            }
-        }));
 
         // songView.setOnItemClickListener(this);
         //searchBox.addTextChangedListener(this);
@@ -195,6 +166,38 @@ public class SongFragment extends Fragment {
             songAdt = new SongAdapter(songList);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             songView.setLayoutManager(mLayoutManager);
+            songView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), songView, new ClickListener() {
+                @Override
+                public void onClick(View childView, int Position) {
+                    //Toast.makeText(getActivity(),"onClick "+Position,Toast.LENGTH_SHORT).show();
+                    if(musicSrv.isPlaying()){
+                        musicSrv.pausePlayer();
+                    }
+                    else {
+
+                        Intent musicPlayerIntent = new Intent(getActivity(),PlayerActivity.class);
+
+                        String songTitle = songList.get(Position).getTitle();
+                        musicPlayerIntent.putExtra("songTitle",songTitle);
+
+                        String mPosition = String.valueOf(Position);
+                        musicPlayerIntent.putExtra("mPosition", mPosition);
+
+                  /*  String tag = childView.getTag().toString();
+                    musicPlayerIntent.putExtra("tag",tag);*/
+
+                        String songArtist = songList.get(Position).getArtist();
+                        musicPlayerIntent.putExtra("songArtist",songArtist);
+
+                        startActivity(musicPlayerIntent);
+
+
+                    }
+                }
+            }));
+
+            songView.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
+
             songView.setAdapter(songAdt);
 
 
