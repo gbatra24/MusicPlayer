@@ -9,17 +9,27 @@ public class Album {
     private String albumName;
     private String title;
     private String artistName;
+    private String albumArtCover;
 
-    public Album(String albumID, String albumName,  String title, String artistName) {
+    public Album(String albumID, String albumName,  String title, String artistName, String albumArtCover) {
         this.albumID = albumID;
         this.albumName = albumName;
         this.artistName = artistName;
         this.title = title;
+        this.albumArtCover = albumArtCover;
     }
 
     public Album(String albumID, String albumName) {
         this.albumID = albumID;
         this.albumName = albumName;
+    }
+
+    public String getAlbumArtCover() {
+        return albumArtCover;
+    }
+
+    public void setAlbumArtCover(String albumArtCover) {
+        this.albumArtCover = albumArtCover;
     }
 
     public String getAlbumID() {

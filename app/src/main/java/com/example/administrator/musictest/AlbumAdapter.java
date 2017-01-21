@@ -47,7 +47,7 @@ public class AlbumAdapter extends BaseAdapter {
         ImageView albumCoverView = (ImageView) albumLay.findViewById(R.id.album_list_cover_view);
         Album currentAlbum = albums.get(position);
         albumView.setText(currentAlbum.getAlbumName());
-        Drawable drawable = Drawable.createFromPath(currentAlbum.getAlbumID());
+        Drawable drawable = Drawable.createFromPath(currentAlbum.getAlbumArtCover());
         albumCoverView.setImageDrawable(drawable);
         albumCoverView.setScaleType(ImageView.ScaleType.FIT_XY);
         albumLay.setTag(position);
