@@ -9,8 +9,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -35,9 +33,7 @@ public class MainActivity  extends AppCompatActivity implements SearchView.OnQue
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
 
         ViewPager viewpager = (ViewPager) findViewById(R.id.view_pager);
         viewpager.setAdapter(new SimpleFragmentPageAdapter(getSupportFragmentManager(),this));
@@ -84,12 +80,12 @@ public class MainActivity  extends AppCompatActivity implements SearchView.OnQue
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if(TextUtils.isEmpty(newText)){
+        /*if(TextUtils.isEmpty(newText)){
             songAdapter.getFilter().filter(newText);
         }
         else {
             songAdapter.getFilter().filter(newText.toString());
-        }
+        }*/
         return true;
     }
 

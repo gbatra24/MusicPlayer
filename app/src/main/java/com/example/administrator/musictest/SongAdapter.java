@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,24 +15,24 @@ import java.util.ArrayList;
  * Created by Gagan on 11/17/2016.
  */
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> implements Filterable{
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
 
     private ArrayList<Song> songs;
     private ArrayList<Song> filteredList;
     private LayoutInflater songInflator;
-    private SongFilter songFilter;
+    //private SongFilter songFilter;
 
     public SongAdapter(ArrayList<Song> theSong) {
         songs = theSong;
     }
 
-    @Override
+   /* @Override
     public Filter getFilter() {
         if(songFilter == null){
             songFilter = new SongFilter();
         }
         return songFilter;
-    }
+    }*/
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView songView,artistView;
@@ -77,7 +75,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         return songs.size();
     }
 
-    private class SongFilter extends Filter {
+   /* private class SongFilter extends Filter {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -104,5 +102,5 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
             filteredList = (ArrayList<Song>) results.values;
             notifyDataSetChanged();
         }
-    }
+    }*/
 }
