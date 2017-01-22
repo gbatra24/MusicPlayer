@@ -46,8 +46,6 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_song_list);
 
-        myToolbar = (Toolbar) findViewById(R.id.app_bar_album);
-        setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -58,7 +56,6 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
         songsInAlbum = new ArrayList<Song>();
         //tv = (TextView) findViewById(R.id.tv_position);
         position = Integer.parseInt(getIntent().getStringExtra("pos"));
-        id = getIntent().getStringExtra("id");
         //tv.setText("" + position);
       /*  Song currentSong = musicService.getCurrentPlayingSong();
         Drawable coverDrawable =  Drawable.createFromPath(currentSong.getAlbumId());

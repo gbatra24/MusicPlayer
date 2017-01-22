@@ -2,6 +2,7 @@ package com.example.administrator.musictest;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -15,10 +16,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +29,7 @@ import java.util.Comparator;
 /**
  * Created by Gagan on 11/21/2016.
  */
-public class AlbumFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class AlbumFragment extends Fragment {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Album> albumList;
@@ -110,10 +112,21 @@ public class AlbumFragment extends Fragment implements AdapterView.OnItemClickLi
         AlbumAdapter albumAdt = new AlbumAdapter(albumList);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(),3);
         albumView.setLayoutManager(mLayoutManager);
+        albumView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), albumView, new SongFragment.ClickListener() {
+            @Override
+            public void onClick(View childView, int Position) {
+                Intent songListIntent = new Intent(getActivity(), AlbumSongListActivity.class);
+
+                String pos = String.valueOf(Position);
+                songListIntent.putExtra("pos", pos);
+
+                startActivity(songListIntent);
+            }
+        }));
         albumView.setAdapter(albumAdt);
     }
 
-    @Override
+   /* @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent songListIntent = new Intent(this.getActivity(), AlbumSongListActivity.class);
 
@@ -124,5 +137,52 @@ public class AlbumFragment extends Fragment implements AdapterView.OnItemClickLi
         songListIntent.putExtra("id", ID);
 
         startActivity(songListIntent);
+    }*/
+
+    class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+        private GestureDetector gestureDetector;
+        private SongFragment.ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, RecyclerView recyclerView, SongFragment.ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                    //return super.onSingleTapUp(e);
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    super.onLongPress(e);
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildAdapterPosition(child));
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
     }
+
+    public static interface ClickListener {
+        public void onClick(View childView, int Position);
+        //public void onLongClick(View childView, int Position);
+    }
+
 }
