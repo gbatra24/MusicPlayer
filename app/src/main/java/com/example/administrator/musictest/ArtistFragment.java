@@ -74,19 +74,22 @@ public class ArtistFragment extends Fragment {
     private void fillSongAdapter() {
         ContentResolver musicResolver = getActivity().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = musicResolver.query(musicUri,null,null,null,null);
+        Uri artistUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+        Cursor artistCursor = musicResolver.query(artistUri,
+                new String[]{MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST},
+                null,null,null);
 
-        if(musicCursor!=null && musicCursor.moveToFirst()) {
+        if(artistCursor!=null && artistCursor.moveToFirst()) {
             //int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID);
-            int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int idColumn = artistCursor.getColumnIndex(MediaStore.Audio.Artists._ID);
+            int artistColumn = artistCursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST);
 
             do {
-                String thisID = musicCursor.getString(idColumn);
+                String thisID = artistCursor.getString(idColumn);
                 //String thisTitle = musicCursor.getString(titleColumn);
-                String thisArtist = musicCursor.getString(artistColumn);
+                String thisArtist = artistCursor.getString(artistColumn);
                 artistList.add(new Artist(thisID,thisArtist));
-            }while (musicCursor.moveToNext());
+            }while (artistCursor.moveToNext());
 
             Collections.sort(artistList, new Comparator<Artist>() {
                 @Override
@@ -98,7 +101,7 @@ public class ArtistFragment extends Fragment {
             ArtistAdapter artistAdt = new ArtistAdapter(artistList);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             artistView.setLayoutManager(mLayoutManager);
-            
+
             artistView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             artistView.setAdapter(artistAdt);
         }
