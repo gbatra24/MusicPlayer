@@ -13,11 +13,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,18 +31,18 @@ public class AlbumFragment extends Fragment implements AdapterView.OnItemClickLi
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Album> albumList;
-    private GridView albumView;
+    private RecyclerView albumView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.album_fragment, container, false);
-        albumView = (GridView) view.findViewById(R.id.albums_list);
+        albumView = (RecyclerView) view.findViewById(R.id.albums_list);
 
         albumList = new ArrayList<Album>();
         //albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
         getAlbumList();
-        albumView.setOnItemClickListener(this);
+        //albumView.setOnItemClickListener(this);
         return view;
     }
 
@@ -106,7 +107,9 @@ public class AlbumFragment extends Fragment implements AdapterView.OnItemClickLi
         });
 
         // albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
-        AlbumAdapter albumAdt = new AlbumAdapter(this.getActivity(), albumList);
+        AlbumAdapter albumAdt = new AlbumAdapter(albumList);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(),3);
+        albumView.setLayoutManager(mLayoutManager);
         albumView.setAdapter(albumAdt);
     }
 
