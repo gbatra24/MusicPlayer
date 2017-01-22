@@ -12,10 +12,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,16 +28,16 @@ import java.util.Comparator;
 public class ArtistFragment extends Fragment {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
-    private ArrayList<Song> artistList;
-    private ListView artistView;
+    private ArrayList<Artist> artistList;
+    private RecyclerView artistView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.artist_fragment, container,false);
-        artistView = (ListView) view.findViewById(R.id.artists_list);
+        artistView = (RecyclerView) view.findViewById(R.id.artists_list);
 
-        artistList = new ArrayList<Song>();
+        artistList = new ArrayList<Artist>();
 
         getSongList();
         return view;
@@ -81,20 +82,24 @@ public class ArtistFragment extends Fragment {
             int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
 
             do {
-                long thisID = musicCursor.getLong(idColumn);
+                String thisID = musicCursor.getString(idColumn);
                 //String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
-                artistList.add(new Song(thisID,thisArtist));
+                artistList.add(new Artist(thisID,thisArtist));
             }while (musicCursor.moveToNext());
 
-            Collections.sort(artistList, new Comparator<Song>() {
+            Collections.sort(artistList, new Comparator<Artist>() {
                 @Override
-                public int compare(Song a, Song b) {
-                    return a.getArtist().compareTo(b.getArtist());
+                public int compare(Artist a, Artist b) {
+                    return a.getArtistName().compareTo(b.getArtistName());
                 }
             });
 
-            ArtistAdapter artistAdt = new ArtistAdapter(this.getActivity(), artistList);
+            ArtistAdapter artistAdt = new ArtistAdapter(artistList);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+            artistView.setLayoutManager(mLayoutManager);
+            
+            artistView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             artistView.setAdapter(artistAdt);
         }
 
