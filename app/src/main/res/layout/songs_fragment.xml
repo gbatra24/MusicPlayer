@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/song_adapter_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="10dp"
-    android:paddingRight="5dp"
-    android:orientation="vertical" >
+    android:paddingRight="5dp">
 
     <android.support.v7.widget.RecyclerView
-    android:id="@+id/songs_list"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentTop="true">
+        android:id="@+id/songs_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:scrollbars="vertical">
     </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>
