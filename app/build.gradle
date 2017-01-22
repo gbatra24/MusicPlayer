@@ -31,4 +31,5 @@ dependencies {
         mavenCentral()
     }
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.simplecityapps:recyclerview-fastscroll:1.0.11'
 }

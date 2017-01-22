@@ -33,13 +33,16 @@ public class MainActivity  extends AppCompatActivity implements SearchView.OnQue
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        setSupportActionBar(toolbar);
+
+
 
         ViewPager viewpager = (ViewPager) findViewById(R.id.view_pager);
         viewpager.setAdapter(new SimpleFragmentPageAdapter(getSupportFragmentManager(),this));
 
         TabLayout tablayout = (TabLayout) findViewById(R.id.tab_layout);
         tablayout.setupWithViewPager(viewpager);
+
+        songAdapter = new SongAdapter(songList);
 
 
     }
@@ -75,17 +78,15 @@ public class MainActivity  extends AppCompatActivity implements SearchView.OnQue
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        /*if(TextUtils.isEmpty(newText)){
-            songAdapter.getFilter().filter(newText);
+        SongFragment songFragment = (SongFragment) getSupportFragmentManager().findFragmentById(R.id.song_adapter_fragment);
+        if (songFragment != null) {
+            songFragment.filterResults(newText);
         }
-        else {
-            songAdapter.getFilter().filter(newText.toString());
-        }*/
         return true;
     }
 

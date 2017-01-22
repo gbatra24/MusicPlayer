@@ -22,6 +22,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,13 +35,13 @@ public class AlbumFragment extends Fragment {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Album> albumList;
-    private RecyclerView albumView;
+    private FastScrollRecyclerView albumView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.album_fragment, container, false);
-        albumView = (RecyclerView) view.findViewById(R.id.albums_list);
+        albumView = (FastScrollRecyclerView) view.findViewById(R.id.albums_list);
 
         albumList = new ArrayList<Album>();
         //albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
@@ -119,6 +121,9 @@ public class AlbumFragment extends Fragment {
 
                 String pos = String.valueOf(Position);
                 songListIntent.putExtra("pos", pos);
+
+               /* String ID = String.valueOf(id);
+                songListIntent.putExtra("id", ID);*/
 
                 startActivity(songListIntent);
             }

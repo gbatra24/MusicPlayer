@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,13 +35,13 @@ public class ArtistFragment extends Fragment {
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Artist> artistList;
-    private RecyclerView artistView;
+    private FastScrollRecyclerView artistView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.artist_fragment, container,false);
-        artistView = (RecyclerView) view.findViewById(R.id.artists_list);
+        artistView = (FastScrollRecyclerView) view.findViewById(R.id.artists_list);
 
         artistList = new ArrayList<Artist>();
 

@@ -2,12 +2,17 @@ package com.example.administrator.musictest;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 
@@ -15,24 +20,31 @@ import java.util.ArrayList;
  * Created by Gagan on 11/17/2016.
  */
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> implements Filterable, FastScrollRecyclerView.SectionedAdapter{
 
     private ArrayList<Song> songs;
     private ArrayList<Song> filteredList;
     private LayoutInflater songInflator;
-    //private SongFilter songFilter;
+    private SongFilter songFilter;
 
     public SongAdapter(ArrayList<Song> theSong) {
         songs = theSong;
     }
 
-   /* @Override
+    @Override
     public Filter getFilter() {
         if(songFilter == null){
             songFilter = new SongFilter();
         }
         return songFilter;
-    }*/
+    }
+
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+        String title = songs.get(position).getTitle();
+        return String.valueOf(title.charAt(0));
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView songView,artistView;
@@ -67,7 +79,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
             holder.songCoverView.setImageResource(R.drawable.default_cover);
         }
         //holder.songCoverView.setImageBitmap(bit);
-
     }
 
     @Override
@@ -75,7 +86,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
         return songs.size();
     }
 
-   /* private class SongFilter extends Filter {
+    private class SongFilter extends Filter {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -91,8 +102,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
                 filterResults.values = tempList;
             }
             else {
-                filterResults.count = filteredList.size();
-                filterResults.values = filteredList;
+                filterResults.count = 0;
+                filterResults.values = null;
             }
             return filterResults;
         }
@@ -102,5 +113,5 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
             filteredList = (ArrayList<Song>) results.values;
             notifyDataSetChanged();
         }
-    }*/
+    }
 }

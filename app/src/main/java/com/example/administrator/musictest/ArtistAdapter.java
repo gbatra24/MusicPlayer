@@ -1,10 +1,13 @@
 package com.example.administrator.musictest;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 
@@ -12,13 +15,20 @@ import java.util.ArrayList;
  * Created by Gagan on 11/21/2016.
  */
 
-public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.MyViewHolder>{
+public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.MyViewHolder>implements FastScrollRecyclerView.SectionedAdapter{
 
     private ArrayList<Artist> artists;
     private LayoutInflater artistInflator;
 
     public ArtistAdapter(ArrayList<Artist> theArtist) {
         artists = theArtist;
+    }
+
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+        String title = artists.get(position).getArtistName();
+        return String.valueOf(title.charAt(0));
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

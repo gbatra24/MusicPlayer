@@ -19,12 +19,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +41,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 public class SongFragment extends Fragment {
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Song> songList;
-    private RecyclerView songView;
+    private FastScrollRecyclerView songView;
     private MusicService musicSrv;
     private boolean musicBound = false;
     private Intent playIntent;
@@ -52,7 +55,7 @@ public class SongFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.songs_fragment, container, false);
 
-        songView = (RecyclerView) view.findViewById(R.id.songs_list);
+        songView = (FastScrollRecyclerView) view.findViewById(R.id.songs_list);
         songList = new ArrayList<Song>();
         //searchBox = (EditText) view.findViewById(R.id.search_box);
 
@@ -170,15 +173,14 @@ public class SongFragment extends Fragment {
                 @Override
                 public void onClick(View childView, int Position) {
                     //Toast.makeText(getActivity(),"onClick "+Position,Toast.LENGTH_SHORT).show();
-                    if(musicSrv.isPlaying()){
+                    if (musicSrv.isPlaying()) {
                         musicSrv.pausePlayer();
-                    }
-                    else {
+                    } else {
 
-                        Intent musicPlayerIntent = new Intent(getActivity(),PlayerActivity.class);
+                        Intent musicPlayerIntent = new Intent(getActivity(), PlayerActivity.class);
 
                         String songTitle = songList.get(Position).getTitle();
-                        musicPlayerIntent.putExtra("songTitle",songTitle);
+                        musicPlayerIntent.putExtra("songTitle", songTitle);
 
                         String mPosition = String.valueOf(Position);
                         musicPlayerIntent.putExtra("mPosition", mPosition);
@@ -187,7 +189,7 @@ public class SongFragment extends Fragment {
                     musicPlayerIntent.putExtra("tag",tag);*/
 
                         String songArtist = songList.get(Position).getArtist();
-                        musicPlayerIntent.putExtra("songArtist",songArtist);
+                        musicPlayerIntent.putExtra("songArtist", songArtist);
 
                         startActivity(musicPlayerIntent);
 
@@ -196,7 +198,7 @@ public class SongFragment extends Fragment {
                 }
             }));
 
-            songView.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
+            songView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
             songView.setAdapter(songAdt);
 
@@ -204,42 +206,43 @@ public class SongFragment extends Fragment {
         }
 
     }
-   /* @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        if(musicSrv.isPlaying()){
-            musicSrv.pausePlayer();
-        }
-        else {
+    /* @Override
+     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            Intent musicPlayerIntent = new Intent(this.getActivity(),PlayerActivity.class);
+         if(musicSrv.isPlaying()){
+             musicSrv.pausePlayer();
+         }
+         else {
 
-            String songTitle = songList.get(position).getTitle();
-            musicPlayerIntent.putExtra("songTitle",songTitle);
+             Intent musicPlayerIntent = new Intent(this.getActivity(),PlayerActivity.class);
 
-            String tag = view.getTag().toString();
-            musicPlayerIntent.putExtra("tag",tag);
+             String songTitle = songList.get(position).getTitle();
+             musicPlayerIntent.putExtra("songTitle",songTitle);
 
-            String songArtist = songList.get(position).getArtist();
-            musicPlayerIntent.putExtra("songArtist",songArtist);
+             String tag = view.getTag().toString();
+             musicPlayerIntent.putExtra("tag",tag);
 
-            startActivity(musicPlayerIntent);
+             String songArtist = songList.get(position).getArtist();
+             musicPlayerIntent.putExtra("songArtist",songArtist);
+
+             startActivity(musicPlayerIntent);
 
 
-        }
+         }
 
-    }
-*/
+     }
+ */
     class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-       private GestureDetector gestureDetector;
-       private ClickListener clickListener;
+        private GestureDetector gestureDetector;
+        private ClickListener clickListener;
 
-       public RecyclerTouchListener(Context context, RecyclerView recyclerView, ClickListener clickListener){
-           this.clickListener = clickListener;
-           gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
+        public RecyclerTouchListener(Context context, RecyclerView recyclerView, ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
-                    return  true;
+                    return true;
                     //return super.onSingleTapUp(e);
                 }
 
@@ -248,31 +251,41 @@ public class SongFragment extends Fragment {
                     super.onLongPress(e);
                 }
             });
-       }
+        }
 
-       @Override
-       public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-           View child = rv.findChildViewUnder(e.getX(),e.getY());
-           if(child!=null && clickListener!=null && gestureDetector.onTouchEvent(e)) {
-               clickListener.onClick(child, rv.getChildAdapterPosition(child));
-               return true;
-           }
-           return false;
-       }
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildAdapterPosition(child));
+                return true;
+            }
+            return false;
+        }
 
-       @Override
-       public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
 
-       }
+        }
 
-       @Override
-       public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
-       }
-   }
+        }
+    }
+
     public static interface ClickListener {
         public void onClick(View childView, int Position);
         //public void onLongClick(View childView, int Position);
+    }
+
+    public void filterResults(String newText) {
+        if (TextUtils.isEmpty(newText)) {
+            songAdt.getFilter().filter(newText);
+        } else {
+            songAdt.getFilter().filter(newText.toString());
+        }
+        //return true;
     }
 
 }
