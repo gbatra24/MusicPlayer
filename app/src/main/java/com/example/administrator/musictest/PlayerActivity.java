@@ -50,8 +50,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
-        myToolbar = (Toolbar) findViewById(R.id.app_bar);
-        setSupportActionBar(myToolbar);
+
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         getSupportActionBar().setHomeButtonEnabled(true);

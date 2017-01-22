@@ -8,11 +8,6 @@
     tools:context="com.example.administrator.musictest.PlayerActivity"
     android:background="#ffffff">
 
-    <include layout="@layout/app_bar_main"
-        android:id="@+id/app_bar">
-    </include>
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
