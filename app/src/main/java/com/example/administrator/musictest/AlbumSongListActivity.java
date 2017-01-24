@@ -40,6 +40,7 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
     private boolean musicBound = false;
     private Intent playIntent;
     private int position;
+    private String albumName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,9 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
         songsInAlbum = new ArrayList<Song>();
         //tv = (TextView) findViewById(R.id.tv_position);
         position = Integer.parseInt(getIntent().getStringExtra("pos"));
-        //tv.setText("" + position);
+        id = getIntent().getStringExtra("id");
+        albumName = getIntent().getStringExtra("name");
+        // /tv.setText("" + position);
       /*  Song currentSong = musicService.getCurrentPlayingSong();
         Drawable coverDrawable =  Drawable.createFromPath(currentSong.getAlbumId());
         albumCoverArtImage.setImageDrawable(coverDrawable);*/
@@ -133,7 +136,8 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
     private void fillAdapter() {
                 ContentResolver musicResolver = getContentResolver();
                 Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+                Cursor musicCursor = musicResolver.query(musicUri, null, MediaStore.Audio.Media.ALBUM_ID + "=?",
+                        new String[]{id}, null);
 
         if (musicCursor != null && musicCursor.moveToFirst()) {
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
@@ -149,7 +153,7 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
 
                 songsInAlbum.add(new Song(thisId, thisTitle, thisArtist, thisalbumId));
                 // Add the info to our array.
-               /* if (this.id == thisalbumId) {
+                /*if (this.id == thisalbumId) {
                     songsInAlbum.add(new Song(thisId, thisTitle, thisArtist));
                 }*/
             }
@@ -191,8 +195,8 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
             String songTitle = songsInAlbum.get(position).getTitle();
             musicPlayerIntent.putExtra("songTitle",songTitle);
 
-            String tag = view.getTag().toString();
-            musicPlayerIntent.putExtra("tag",tag);
+            String mPosition = String.valueOf(position);
+            musicPlayerIntent.putExtra("mPosition", mPosition);
 
             String songArtist = songsInAlbum.get(position).getArtist();
             musicPlayerIntent.putExtra("songArtist",songArtist);

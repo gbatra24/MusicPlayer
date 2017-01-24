@@ -122,8 +122,11 @@ public class AlbumFragment extends Fragment {
                 String pos = String.valueOf(Position);
                 songListIntent.putExtra("pos", pos);
 
-               /* String ID = String.valueOf(id);
-                songListIntent.putExtra("id", ID);*/
+                String ID = albumList.get(Position).getAlbumID();
+                songListIntent.putExtra("id", ID);
+
+                String name = albumList.get(Position).getAlbumName();
+                songListIntent.putExtra("name",name);
 
                 startActivity(songListIntent);
             }
