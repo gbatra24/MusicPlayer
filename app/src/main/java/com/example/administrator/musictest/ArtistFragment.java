@@ -107,7 +107,7 @@ public class ArtistFragment extends Fragment {
             ArtistAdapter artistAdt = new ArtistAdapter(artistList);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             artistView.setLayoutManager(mLayoutManager);
-            artistView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), artistView, new SongFragment.ClickListener() {
+            artistView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), artistView, new ArtistFragment.ClickListener() {
                 @Override
                 public void onClick(View childView, int Position) {
                     Toast.makeText(getActivity(),""+Position,Toast.LENGTH_SHORT).show();
@@ -121,9 +121,9 @@ public class ArtistFragment extends Fragment {
 
     class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
         private GestureDetector gestureDetector;
-        private SongFragment.ClickListener clickListener;
+        private ClickListener clickListener;
 
-        public RecyclerTouchListener(Context context, RecyclerView recyclerView, SongFragment.ClickListener clickListener) {
+        public RecyclerTouchListener(Context context, RecyclerView recyclerView, ArtistFragment.ClickListener clickListener) {
             this.clickListener = clickListener;
             gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override

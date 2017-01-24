@@ -114,7 +114,7 @@ public class AlbumFragment extends Fragment {
         AlbumAdapter albumAdt = new AlbumAdapter(albumList);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(),3);
         albumView.setLayoutManager(mLayoutManager);
-        albumView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), albumView, new SongFragment.ClickListener() {
+        albumView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), albumView, new AlbumFragment.ClickListener() {
             @Override
             public void onClick(View childView, int Position) {
                 Intent songListIntent = new Intent(getActivity(), AlbumSongListActivity.class);
@@ -149,9 +149,9 @@ public class AlbumFragment extends Fragment {
 
     class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
         private GestureDetector gestureDetector;
-        private SongFragment.ClickListener clickListener;
+        private ClickListener clickListener;
 
-        public RecyclerTouchListener(Context context, RecyclerView recyclerView, SongFragment.ClickListener clickListener) {
+        public RecyclerTouchListener(Context context, RecyclerView recyclerView, AlbumFragment.ClickListener clickListener) {
             this.clickListener = clickListener;
             gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
