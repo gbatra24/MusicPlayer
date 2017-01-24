@@ -2,6 +2,7 @@ package com.example.administrator.musictest;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -13,26 +14,30 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class AlbumSongListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class AlbumSongListActivity extends AppCompatActivity{
 
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ImageView albumCoverArtImage;
     private ArrayList<Song> songsInAlbum;
     private TextView tv;
-    private ListView songListView;
+    private FastScrollRecyclerView songListView;
     private MusicService musicService;
     private Toolbar myToolbar;
     private String id;
@@ -52,7 +57,7 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         albumCoverArtImage = (ImageView) findViewById(R.id.album_cover_art);
-        songListView = (ListView) findViewById(R.id.list_songs_in_album);
+        songListView = (FastScrollRecyclerView) findViewById(R.id.list_songs_in_album);
 
         songsInAlbum = new ArrayList<Song>();
         //tv = (TextView) findViewById(R.id.tv_position);
@@ -64,7 +69,7 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
         Drawable coverDrawable =  Drawable.createFromPath(currentSong.getAlbumId());
         albumCoverArtImage.setImageDrawable(coverDrawable);*/
         getSongsListOfAlbum();
-        songListView.setOnItemClickListener(this);
+        //songListView.setOnItemClickListener(this);
 
     }
 
@@ -167,7 +172,29 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
                 }
             });
 
-            aslAdapter = new AlbumSongListAdapter(this,songsInAlbum);
+            aslAdapter = new AlbumSongListAdapter(songsInAlbum);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            songListView.setLayoutManager(mLayoutManager);
+            songListView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),
+                    songListView, new AlbumSongListActivity.ClickListener(){
+
+                @Override
+                public void onClick(View childView, int Position) {
+                    Intent musicPlayerIntent = new Intent(getApplicationContext(), PlayerActivity.class);
+
+                    String songTitle = songsInAlbum.get(position).getTitle();
+                    musicPlayerIntent.putExtra("songTitle",songTitle);
+
+                    String mPosition = String.valueOf(position);
+                    musicPlayerIntent.putExtra("mPosition", mPosition);
+
+                    String songArtist = songsInAlbum.get(position).getArtist();
+                    musicPlayerIntent.putExtra("songArtist",songArtist);
+
+                    startActivity(musicPlayerIntent);
+                }
+            }));
+            songListView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
             songListView.setAdapter(aslAdapter);
         }
     }
@@ -188,7 +215,53 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+        private GestureDetector gestureDetector;
+        private ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, RecyclerView recyclerView, AlbumSongListActivity.ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                    //return super.onSingleTapUp(e);
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    super.onLongPress(e);
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildAdapterPosition(child));
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
+    }
+
+    public static interface ClickListener {
+        public void onClick(View childView, int Position);
+        //public void onLongClick(View childView, int Position);
+    }
+
+ /*   @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent musicPlayerIntent = new Intent(this,PlayerActivity.class);
 
@@ -202,5 +275,5 @@ public class AlbumSongListActivity extends AppCompatActivity implements AdapterV
             musicPlayerIntent.putExtra("songArtist",songArtist);
 
             startActivity(musicPlayerIntent);
-    }
+    }*/
 }

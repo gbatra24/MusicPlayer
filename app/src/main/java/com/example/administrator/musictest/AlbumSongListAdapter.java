@@ -1,11 +1,9 @@
 package com.example.administrator.musictest;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,15 +12,45 @@ import java.util.ArrayList;
  * Created by Gagan on 1/6/2017.
  */
 
-public class AlbumSongListAdapter extends BaseAdapter{
+public class AlbumSongListAdapter extends RecyclerView.Adapter<AlbumSongListAdapter.MyViewHolder>{
     private ArrayList<Song> albumSongsList;
     private LayoutInflater songInflator;
 
-    public AlbumSongListAdapter(Context c, ArrayList<Song> songs) {
+    public AlbumSongListAdapter(ArrayList<Song> songs) {
         albumSongsList = songs;
-        songInflator = LayoutInflater.from(c);
+        //songInflator = LayoutInflater.from(c);
     }
 
+    @Override
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.albums_song_list_item, parent, false);
+        return new AlbumSongListAdapter.MyViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        Song currentSong = albumSongsList.get(position);
+        holder.albumListSongTitle.setText(currentSong.getTitle());
+        holder.albumListSongArtist.setText(currentSong.getArtist());
+    }
+
+    @Override
+    public int getItemCount() {
+        return albumSongsList.size();
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView albumListSongTitle, albumListSongArtist;
+        //public ImageView albumCoverView;
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            albumListSongTitle = (TextView) itemView.findViewById(R.id.album_song_title);
+            albumListSongArtist = (TextView) itemView.findViewById(R.id.album_song_artist);
+            //albumCoverView = (ImageView) itemView.findViewById(R.id.album_list_cover_view);
+        }
+    }
+/*
     @Override
     public int getCount() {
         return albumSongsList.size();
@@ -48,5 +76,5 @@ public class AlbumSongListAdapter extends BaseAdapter{
         albumListSongArtist.setText(currentSong.getArtist());
         albumSongLay.setTag(position);
         return albumSongLay;
-    }
+    }*/
 }
