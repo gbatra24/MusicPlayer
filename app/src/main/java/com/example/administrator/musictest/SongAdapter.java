@@ -20,7 +20,8 @@ import java.util.ArrayList;
  * Created by Gagan on 11/17/2016.
  */
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> implements Filterable, FastScrollRecyclerView.SectionedAdapter{
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>
+        implements Filterable, FastScrollRecyclerView.SectionedAdapter{
 
     private ArrayList<Song> songs;
     private ArrayList<Song> filteredList;
