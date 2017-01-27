@@ -24,6 +24,11 @@ public class Song {
         artist = artistName;
     }
 
+    public Song (String songTitle, String albumName) {
+        title = songTitle;
+        album = albumName;
+    }
+
     public Song(long thisId, String albumName, String albumId) {
         id = thisId;
         album = albumName;

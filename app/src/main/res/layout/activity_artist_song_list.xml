@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_artist_song_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.administrator.musictest.ArtistSongListActivity">
+
+    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+        android:id="@+id/list_songs_in_artist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:fastScrollPopupBgColor="@color/colorPrimary"
+        app:fastScrollPopupTextColor="@android:color/primary_text_dark"
+        app:fastScrollThumbColor="@color/colorPrimary"
+        app:fastScrollPopupTextSize="30sp"
+        app:fastScrollPopupBackgroundSize="60dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+    </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
+
+</RelativeLayout>

@@ -3,6 +3,7 @@ package com.example.administrator.musictest;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -110,7 +110,13 @@ public class ArtistFragment extends Fragment {
             artistView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), artistView, new ArtistFragment.ClickListener() {
                 @Override
                 public void onClick(View childView, int Position) {
-                    Toast.makeText(getActivity(),""+Position,Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getActivity(),""+Position,Toast.LENGTH_SHORT).show();
+                    Intent musicPlayerIntent = new Intent(getActivity(), ArtistSongListActivity.class);
+
+                    String artistID = artistList.get(Position).getArtistID();
+                    musicPlayerIntent.putExtra("artistID", artistID);
+
+                    startActivity(musicPlayerIntent);
                 }
             }));
             artistView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
