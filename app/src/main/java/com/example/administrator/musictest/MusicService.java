@@ -1,5 +1,7 @@
 package com.example.administrator.musictest;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -7,9 +9,11 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.IOException;
@@ -37,6 +41,11 @@ public class MusicService extends Service implements
         player = new MediaPlayer();
         random = new Random();
         initMusicPlayer();
+    }
+
+    @Override
+    public void onDestroy() {
+        stopForeground(true);
     }
 
     public void setList(ArrayList<Song> theSongs) {
@@ -182,9 +191,24 @@ public class MusicService extends Service implements
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentIntent(pendingIntent)
+                .setSmallIcon(android.R.drawable.ic_media_play)
+                .setTicker(updateTitle())
+                .setOngoing(true)
+                .setContentTitle(updateTitle())
+                .setContentText(updateArtist());
+
+        Notification not = builder.build();
+        startForeground(1,not);
     }
 
 }
