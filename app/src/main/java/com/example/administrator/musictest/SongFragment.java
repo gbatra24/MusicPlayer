@@ -30,8 +30,6 @@ import android.widget.EditText;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -49,15 +47,59 @@ public class SongFragment extends Fragment {
     private String coverPath;
     private EditText searchBox;
     private SongAdapter songAdt;
+    private LinearLayoutManager mLayoutManager;
+    private int lastPage = Integer.MAX_VALUE;
+    private int currentPage = 0;
+    private boolean isLoading = false;
+    private final int PAGE_SIZE = 50;
+
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mLayoutManager.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+
+            if (!isLoading && currentPage < lastPage) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= PAGE_SIZE) {
+                    loadMoreItems();
+                }
+            }
+        }
+    };
+
+    private void loadMoreItems() {
+        isLoading = true;
+
+        currentPage += 1;
+
+        fillSongAdapter(currentPage, PAGE_SIZE);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.songs_fragment, container, false);
-
         songView = (FastScrollRecyclerView) view.findViewById(R.id.songs_list);
+        mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        songView.setLayoutManager(mLayoutManager);
+        // Pagination
+        songView.addOnScrollListener(recyclerViewOnScrollListener);
+
         songList = new ArrayList<Song>();
         //searchBox = (EditText) view.findViewById(R.id.search_box);
+
+        songAdt = new SongAdapter(songList);
+        songView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        songView.setAdapter(songAdt);
 
         getSongList();
         //fetchAlbumArt();
@@ -65,6 +107,14 @@ public class SongFragment extends Fragment {
         // songView.setOnItemClickListener(this);
         //searchBox.addTextChangedListener(this);
         return view;
+    }
+
+    public int getLastPage() {
+        ContentResolver musicResolver = getActivity().getContentResolver();
+        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor countCursor = musicResolver.query(musicUri, new String[] {"count(*) AS count"}, null, null, null);
+        countCursor.moveToFirst();
+        return (int) Math.ceil(countCursor.getInt(0) / PAGE_SIZE);
     }
 
     public void onStart() {
@@ -112,7 +162,8 @@ public class SongFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     MY_READ_EXTERNAL_PERMISSION_CONSTANT);
         } else {
-            fillSongAdapter();
+            fillSongAdapter(currentPage, PAGE_SIZE);
+            lastPage = getLastPage();
         }
     }
 
@@ -121,7 +172,8 @@ public class SongFragment extends Fragment {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_READ_EXTERNAL_PERMISSION_CONSTANT) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                fillSongAdapter();
+                fillSongAdapter(currentPage, PAGE_SIZE);
+                lastPage = getLastPage();
             }
         } else {
             System.out.println("Permission is denied............................");
@@ -129,11 +181,12 @@ public class SongFragment extends Fragment {
 
     }
 
-    public void fillSongAdapter() {
+    public void fillSongAdapter(int pageNumber, int pageSize) {
         ContentResolver musicResolver = getActivity().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Uri albumUri = android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        int offset = pageNumber * pageSize;
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, MediaStore.Audio.Media.TITLE + " LIMIT " + offset + ", " + pageSize);
 
         if (musicCursor != null && musicCursor.moveToFirst()) {
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
@@ -159,16 +212,14 @@ public class SongFragment extends Fragment {
                 songList.add(new Song(thisID, thisTitle, thisArtist, thisAlbumId));
             } while (musicCursor.moveToNext());
 
-            Collections.sort(songList, new Comparator<Song>() {
-                @Override
-                public int compare(Song a, Song b) {
-                    return a.getTitle().compareTo(b.getTitle());
-                }
-            });
+//            Collections.sort(songList, new Comparator<Song>() {
+//                @Override
+//                public int compare(Song a, Song b) {
+//                    return a.getTitle().compareTo(b.getTitle());
+//                }
+//            });
 
-            songAdt = new SongAdapter(songList);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-            songView.setLayoutManager(mLayoutManager);
+            //songAdt = new SongAdapter(songList);
             songView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), songView, new ClickListener() {
                 @Override
                 public void onClick(View childView, int Position) {
@@ -198,14 +249,14 @@ public class SongFragment extends Fragment {
                 }
             }));
 
-            songView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
-            songView.setAdapter(songAdt);
 
+            songAdt.notifyDataSetChanged();
+            isLoading = false;
 
         }
-
     }
+
 
     /* @Override
      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

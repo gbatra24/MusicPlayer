@@ -2,6 +2,7 @@ package com.example.administrator.musictest;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -70,15 +71,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>
         Song currentSong = songs.get(position);
         holder.songView.setText(currentSong.getTitle());
         holder.artistView.setText(currentSong.getArtist());
-        //Drawable drawable = Drawable.createFromPath(currentSong.getAlbumId());
-        //BitmapDrawable drawable = (BitmapDrawable) BitmapDrawable.createFromPath(currentSong.getAlbumId());
-        Bitmap bit = BitmapFactory.decodeFile(currentSong.getAlbumId());
-        if(bit != null ) {
-            holder.songCoverView.setImageBitmap(bit);
-        }
-        else {
-            holder.songCoverView.setImageResource(R.drawable.default_cover);
-        }
+        holder.songCoverView.setVisibility(View.INVISIBLE);
+        GetImageTask task = new GetImageTask(currentSong, holder);
+        task.execute(currentSong.getAlbumId());
+
         //holder.songCoverView.setImageBitmap(bit);
     }
 
@@ -113,6 +109,40 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>
         protected void publishResults(CharSequence constraint, FilterResults results) {
             filteredList = (ArrayList<Song>) results.values;
             notifyDataSetChanged();
+        }
+    }
+
+    class GetImageTask extends AsyncTask<String, Void, Bitmap> {
+
+
+        private final Song song;
+        private final MyViewHolder holder;
+
+        public GetImageTask(Song song, MyViewHolder holder) {
+            this.song = song;
+            this.holder = holder;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            //download:
+            Bitmap bit = null;
+            if (song.getAlbumId() != null) {
+                bit = BitmapFactory.decodeFile(song.getAlbumId());
+            }
+            return bit;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null && !result.equals(holder.songCoverView)) {
+                holder.songCoverView.setImageBitmap(result);
+                holder.songCoverView.setVisibility(View.VISIBLE);
+                return;
+            }
+            holder.songCoverView.setVisibility(View.VISIBLE);
+            holder.songCoverView.setImageResource(R.drawable.default_cover);
+
         }
     }
 }
