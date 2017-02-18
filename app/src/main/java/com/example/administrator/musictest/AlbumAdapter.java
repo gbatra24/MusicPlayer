@@ -1,6 +1,8 @@
 package com.example.administrator.musictest;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,13 +38,15 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Album currentAlbum = albums.get(position);
         holder.albumNameView.setText(currentAlbum.getAlbumName());
-        Drawable drawable = Drawable.createFromPath(currentAlbum.getAlbumArtCover());
+        GetImageTask task = new GetImageTask(currentAlbum, holder);
+        task.execute(currentAlbum.getAlbumArtCover());
+        /*Drawable drawable = Drawable.createFromPath(currentAlbum.getAlbumArtCover());
         if(drawable != null ) {
             holder.albumCoverView.setImageDrawable(drawable);
         }
         else {
             holder.albumCoverView.setImageResource(R.drawable.default_cover);
-        }
+        }*/
         //holder.albumCoverView.setImageDrawable(drawable);
     }
 
@@ -68,32 +72,37 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
         }
     }
 
-   /* @Override
-    public int getCount() {
-        return albums.size();
-    }
+    class GetImageTask extends AsyncTask<String, Void, Bitmap> {
 
-    @Override
-    public Object getItem(int position) {
-        return null;
-    }
 
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
+        private final Album album;
+        private final AlbumAdapter.MyViewHolder holder;
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LinearLayout albumLay = (LinearLayout) albumInflator.inflate(R.layout.album_list_item, parent, false);
-        TextView albumView = (TextView) albumLay.findViewById(R.id.album_view);
-        ImageView albumCoverView = (ImageView) albumLay.findViewById(R.id.album_list_cover_view);
-        Album currentAlbum = albums.get(position);
-        albumView.setText(currentAlbum.getAlbumName());
-        Drawable drawable = Drawable.createFromPath(currentAlbum.getAlbumArtCover());
-        albumCoverView.setImageDrawable(drawable);
-        albumCoverView.setScaleType(ImageView.ScaleType.FIT_XY);
-        albumLay.setTag(position);
-        return albumLay;
-    }*/
+        public GetImageTask(Album album, AlbumAdapter.MyViewHolder holder) {
+            this.album = album;
+            this.holder = holder;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            //download:
+            Bitmap bit = null;
+            if (album.getAlbumID() != null) {
+                bit = BitmapFactory.decodeFile(album.getAlbumArtCover());
+            }
+            return bit;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null && !result.equals(holder.albumCoverView)) {
+                holder.albumCoverView.setImageBitmap(result);
+                holder.albumCoverView.setVisibility(View.VISIBLE);
+                return;
+            }
+            holder.albumCoverView.setVisibility(View.VISIBLE);
+            holder.albumCoverView.setImageResource(R.drawable.default_cover);
+
+        }
+    }
 }
