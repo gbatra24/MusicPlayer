@@ -186,7 +186,8 @@ public class SongFragment extends Fragment {
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Uri albumUri = android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
         int offset = pageNumber * pageSize;
-        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, MediaStore.Audio.Media.TITLE + " LIMIT " + offset + ", " + pageSize);
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null,
+                MediaStore.Audio.Media.TITLE + " LIMIT " + offset + ", " + pageSize);
 
         if (musicCursor != null && musicCursor.moveToFirst()) {
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);

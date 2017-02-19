@@ -25,8 +25,6 @@ import android.view.ViewGroup;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Created by Gagan on 11/21/2016.
@@ -36,6 +34,43 @@ public class AlbumFragment extends Fragment {
     private static final int MY_READ_EXTERNAL_PERMISSION_CONSTANT = 1;
     private ArrayList<Album> albumList;
     private FastScrollRecyclerView albumView;
+    private AlbumAdapter albumAdt;
+    private int lastPage = Integer.MAX_VALUE;
+    private int currentPage = 0;
+    private boolean isLoading = false;
+    private final int PAGE_SIZE = 20;
+    private GridLayoutManager mLayoutManager;
+
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mLayoutManager.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+
+            if (!isLoading && currentPage < lastPage) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= PAGE_SIZE) {
+                    loadMoreItems();
+                }
+            }
+        }
+    };
+
+    private void loadMoreItems() {
+        isLoading = true;
+
+        currentPage += 1;
+
+        fillAlbumAdapter(currentPage, PAGE_SIZE);
+    }
 
     @Nullable
     @Override
@@ -44,9 +79,13 @@ public class AlbumFragment extends Fragment {
         albumView = (FastScrollRecyclerView) view.findViewById(R.id.albums_list);
 
         albumList = new ArrayList<Album>();
-        //albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
+
+        mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(),3);
+        albumView.setLayoutManager(mLayoutManager);
+        albumView.addOnScrollListener(recyclerViewOnScrollListener);
+        albumAdt = new AlbumAdapter(albumList);
+        albumView.setAdapter(albumAdt);
         getAlbumList();
-        //albumView.setOnItemClickListener(this);
         return view;
     }
 
@@ -59,7 +98,8 @@ public class AlbumFragment extends Fragment {
         } else {
             /*ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     MY_READ_EXTERNAL_PERMISSION_CONSTANT);*/
-            fillAlbumAdapter();
+            fillAlbumAdapter(currentPage, PAGE_SIZE);
+            lastPage = getLastPage();
         }
     }
 
@@ -68,7 +108,8 @@ public class AlbumFragment extends Fragment {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_READ_EXTERNAL_PERMISSION_CONSTANT) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                fillAlbumAdapter();
+                fillAlbumAdapter(currentPage, PAGE_SIZE);
+                lastPage = getLastPage();
             }
         } else {
             System.out.println("Permission is denied............................");
@@ -76,15 +117,26 @@ public class AlbumFragment extends Fragment {
 
     }
 
-    private void fillAlbumAdapter() {
+    private int getLastPage() {
         ContentResolver musicResolver = getActivity().getContentResolver();
-        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Uri albumUri = android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        Cursor countCursor = musicResolver.query(musicUri, new String[] {"count(*) AS count",
+                MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM,
+                MediaStore.Audio.Albums.ALBUM_ART, MediaStore.Audio.Albums.ARTIST}, null, null, null);
+        countCursor.moveToFirst();
+        return (int) Math.ceil(countCursor.getInt(0) / PAGE_SIZE);
+    }
 
+    private void fillAlbumAdapter(int pageNumber, int pageSize) {
+        ContentResolver musicResolver = getActivity().getContentResolver();
+
+        Uri albumUri = android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        int offset = pageNumber * pageSize;
 
         Cursor albumCursor = musicResolver.query(albumUri,
-                new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Albums.ALBUM_ART, MediaStore.Audio.Albums.ARTIST},
-                null, null, null);
+                new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM,
+                        MediaStore.Audio.Albums.ALBUM_ART, MediaStore.Audio.Albums.ARTIST},
+                null, null, MediaStore.Audio.Albums.ALBUM+ " LIMIT " + offset + ", " + pageSize);
 
 
         if (albumCursor != null && albumCursor.moveToFirst()) {
@@ -103,17 +155,6 @@ public class AlbumFragment extends Fragment {
             } while (albumCursor.moveToNext());
         }
 
-        Collections.sort(albumList, new Comparator<Album>() {
-            @Override
-            public int compare(Album a, Album b) {
-                return a.getAlbumName().compareTo(b.getAlbumName());
-            }
-        });
-
-        // albumList = new ArrayList<Song>(new LinkedHashSet<Song>(albumList));
-        AlbumAdapter albumAdt = new AlbumAdapter(albumList);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(),3);
-        albumView.setLayoutManager(mLayoutManager);
         albumView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), albumView, new AlbumFragment.ClickListener() {
             @Override
             public void onClick(View childView, int Position) {
@@ -131,7 +172,9 @@ public class AlbumFragment extends Fragment {
                 startActivity(songListIntent);
             }
         }));
-        albumView.setAdapter(albumAdt);
+
+        albumAdt.notifyDataSetChanged();
+        isLoading = false;
     }
 
    /* @Override
